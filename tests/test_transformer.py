@@ -13,7 +13,7 @@ class TestHL7Transformer(unittest.TestCase):
 
     def test_adt_name_and_sex_transformation(self):
         raw = (
-            "MSH|^~\\&|EPIC_EHR|HOSPITAL_A|RHAPSODY_IE|HOSPITAL_A|20260902093000||ADT^A01|MSG_001|P|2.3\r"
+            "MSH|^~\\&|HOSPITAL_EHR|HOSPITAL_A|RHAPSODY_IE|HOSPITAL_A|20260902093000||ADT^A01|MSG_001|P|2.3\r"
             "PID|1||MRN12345||smith^john^arthur||19850615|MALE\r"
         )
         msg = parse_hl7_message(raw)
@@ -27,7 +27,7 @@ class TestHL7Transformer(unittest.TestCase):
 
     def test_orm_loinc_mapping_and_order_sync(self):
         raw = (
-            "MSH|^~\\&|EPIC_CPOE|AMBULATORY|RHAPSODY_IE|HOSPITAL_A|20260902093000||ORM^O01|MSG_002|P|2.3\r"
+            "MSH|^~\\&|HOSPITAL_CPOE|AMBULATORY|RHAPSODY_IE|HOSPITAL_A|20260902093000||ORM^O01|MSG_002|P|2.3\r"
             "PID|1||MRN12345^^^HOSPITAL^MR||DOE^JOHN||19850615|M\r"
             "ORC|NW|ORD7788|||IP||^^^20260902120000^^S||20260902120000\r"
             "OBR|1|||CBC^Complete Blood Count^LOCAL|||20260902120000\r"

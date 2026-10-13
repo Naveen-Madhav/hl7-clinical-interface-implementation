@@ -204,7 +204,7 @@ class TestHL7IntegrationScenarios(unittest.TestCase):
         """When downstream destination is unreachable, Interface Engine must return AE and write to DLQ."""
         self.mock_hub.simulate_communication_failure = True
         orm_test = (
-            "MSH|^~\&|EPIC_CPOE|AMBULATORY|RHAPSODY_IE|HOSPITAL_A|20260902120000||ORM^O01|MSG_COMM_ERR_01|P|2.3\r"
+            "MSH|^~\&|HOSPITAL_CPOE|AMBULATORY|RHAPSODY_IE|HOSPITAL_A|20260902120000||ORM^O01|MSG_COMM_ERR_01|P|2.3\r"
             "PID|1||MRN100234^^^HOSPITAL_A^MR||DOE^JOHN||19850615|M\r"
             "PV1|1|I|ICU^01\r"
             "ORC|NW|ORD889999|||IP||^^^20260902120000^^R||20260902120000\r"
@@ -221,7 +221,7 @@ class TestHL7IntegrationScenarios(unittest.TestCase):
         """When downstream LIS rejects order with AR, engine must log error and return AE to caller."""
         self.mock_hub.simulate_rejection = True
         orm_test = (
-            "MSH|^~\&|EPIC_CPOE|AMBULATORY|RHAPSODY_IE|HOSPITAL_A|20260902120000||ORM^O01|MSG_REJ_ACK_01|P|2.3\r"
+            "MSH|^~\&|HOSPITAL_CPOE|AMBULATORY|RHAPSODY_IE|HOSPITAL_A|20260902120000||ORM^O01|MSG_REJ_ACK_01|P|2.3\r"
             "PID|1||MRN100234^^^HOSPITAL_A^MR||DOE^JOHN||19850615|M\r"
             "PV1|1|I|ICU^01\r"
             "ORC|NW|ORD889988|||IP||^^^20260902120000^^R||20260902120000\r"

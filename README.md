@@ -82,7 +82,7 @@ The duplicate-control-ID sample intentionally reuses the admit sample's control 
 
 ## Honest Scope and Limitations
 
-- This is a local reference implementation, not a live Epic, Cerner, or hospital deployment. It does not claim a business outcome, throughput benchmark, or regulatory certification.
+- This is a local reference implementation, not a live EHR, hospital, or vendor deployment. It does not claim a business outcome, throughput benchmark, or regulatory certification.
 - MLLP is unencrypted. Sender-name allowlisting does not authenticate a remote system, and the `require_tls` field does not enable TLS in the listener.
 - Validation covers selected fields and supported structures, not the full HL7 standard. Transformations and LOINC mappings are implemented in Python; `field_mappings.json` is a reference matrix rather than a general mapping runtime or complete version converter.
 - Delivery is synchronous and has one attempt per destination. Retry/backoff and alert settings in configuration are not implemented as automatic replay or notifications.

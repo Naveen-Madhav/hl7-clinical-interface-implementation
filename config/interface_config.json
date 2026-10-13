@@ -20,7 +20,7 @@
       "host": "127.0.0.1",
       "port": 2575,
       "max_connections": 20,
-      "allowed_senders": ["EPIC_EHR", "EPIC_CPOE", "CERNER_LIS", "TEST_CLIENT"],
+      "allowed_senders": ["HOSPITAL_EHR", "HOSPITAL_CPOE", "CERNER_LIS", "TEST_CLIENT"],
       "require_tls": false
     },
     "downstream_destinations": {

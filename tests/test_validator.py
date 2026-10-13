@@ -13,7 +13,7 @@ class TestHL7Validator(unittest.TestCase):
 
     def test_nominal_adt_validation(self):
         raw = (
-            "MSH|^~\\&|EPIC_EHR|HOSPITAL_A|RHAPSODY_IE|HOSPITAL_A|20260902093000||ADT^A01|MSG_001|P|2.3\r"
+            "MSH|^~\\&|HOSPITAL_EHR|HOSPITAL_A|RHAPSODY_IE|HOSPITAL_A|20260902093000||ADT^A01|MSG_001|P|2.3\r"
             "PID|1||MRN12345^^^HOSPITAL^MR||DOE^JOHN||19800101|M\r"
             "PV1|1|I|ICU^01\r"
         )
@@ -24,7 +24,7 @@ class TestHL7Validator(unittest.TestCase):
 
     def test_missing_pid3_mrn(self):
         raw = (
-            "MSH|^~\\&|EPIC_EHR|HOSPITAL_A|RHAPSODY_IE|HOSPITAL_A|20260902093000||ADT^A01|MSG_002|P|2.3\r"
+            "MSH|^~\\&|HOSPITAL_EHR|HOSPITAL_A|RHAPSODY_IE|HOSPITAL_A|20260902093000||ADT^A01|MSG_002|P|2.3\r"
             "PID|1||||DOE^JOHN||19800101|M\r"
         )
         msg = parse_hl7_message(raw)
@@ -35,7 +35,7 @@ class TestHL7Validator(unittest.TestCase):
 
     def test_invalid_dob_format(self):
         raw = (
-            "MSH|^~\\&|EPIC_EHR|HOSPITAL_A|RHAPSODY_IE|HOSPITAL_A|20260902093000||ADT^A01|MSG_003|P|2.3\r"
+            "MSH|^~\\&|HOSPITAL_EHR|HOSPITAL_A|RHAPSODY_IE|HOSPITAL_A|20260902093000||ADT^A01|MSG_003|P|2.3\r"
             "PID|1||MRN12345^^^HOSPITAL^MR||DOE^JOHN||1980-01-01|M\r"
         )
         msg = parse_hl7_message(raw)
@@ -46,7 +46,7 @@ class TestHL7Validator(unittest.TestCase):
 
     def test_orm_missing_orc_segment(self):
         raw = (
-            "MSH|^~\\&|EPIC_CPOE|AMBULATORY|RHAPSODY_IE|HOSPITAL_A|20260902093000||ORM^O01|MSG_004|P|2.3\r"
+            "MSH|^~\\&|HOSPITAL_CPOE|AMBULATORY|RHAPSODY_IE|HOSPITAL_A|20260902093000||ORM^O01|MSG_004|P|2.3\r"
             "PID|1||MRN12345^^^HOSPITAL^MR||DOE^JOHN||19800101|M\r"
             "OBR|1|ORD100||CBC^Complete Blood Count\r"
         )
@@ -68,7 +68,7 @@ class TestHL7Validator(unittest.TestCase):
 
     def test_unknown_message_type_rejection(self):
         raw = (
-            "MSH|^~\\&|EPIC_EHR|HOSPITAL_A|RHAPSODY_IE|HOSPITAL_A|20260902093000||XYZ^Z99|MSG_006|P|2.3\r"
+            "MSH|^~\\&|HOSPITAL_EHR|HOSPITAL_A|RHAPSODY_IE|HOSPITAL_A|20260902093000||XYZ^Z99|MSG_006|P|2.3\r"
             "PID|1||MRN12345^^^HOSPITAL^MR||DOE^JOHN||19800101|M\r"
         )
         msg = parse_hl7_message(raw)
@@ -79,7 +79,7 @@ class TestHL7Validator(unittest.TestCase):
 
     def test_unsupported_hl7_version_rejection(self):
         raw = (
-            "MSH|^~\\&|EPIC_EHR|HOSPITAL_A|RHAPSODY_IE|HOSPITAL_A|20260902093000||ADT^A01|MSG_007|P|9.9\r"
+            "MSH|^~\\&|HOSPITAL_EHR|HOSPITAL_A|RHAPSODY_IE|HOSPITAL_A|20260902093000||ADT^A01|MSG_007|P|9.9\r"
             "PID|1||MRN12345^^^HOSPITAL^MR||DOE^JOHN||19800101|M\r"
         )
         msg = parse_hl7_message(raw)

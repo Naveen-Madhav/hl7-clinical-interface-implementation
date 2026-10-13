@@ -10,7 +10,7 @@ from engine.ack_handler import ACKHandler
 class TestACKHandler(unittest.TestCase):
     def setUp(self):
         self.raw_adt = (
-            "MSH|^~\\&|EPIC_EHR|HOSPITAL_A|RHAPSODY_IE|HOSPITAL_A|20260902093000||ADT^A01|MSG_ORIG_100|P|2.3\r"
+            "MSH|^~\\&|HOSPITAL_EHR|HOSPITAL_A|RHAPSODY_IE|HOSPITAL_A|20260902093000||ADT^A01|MSG_ORIG_100|P|2.3\r"
             "PID|1||MRN12345^^^HOSPITAL^MR||DOE^JOHN||19850615|M\r"
         )
         self.msg = parse_hl7_message(self.raw_adt)
@@ -19,7 +19,7 @@ class TestACKHandler(unittest.TestCase):
         ack = ACKHandler.generate_ack(self.msg, ack_code="AA", text_message="Message accepted")
 
         self.assertEqual(ack.get_field("MSH-3"), "RHAPSODY_IE")
-        self.assertEqual(ack.get_field("MSH-5"), "EPIC_EHR")
+        self.assertEqual(ack.get_field("MSH-5"), "HOSPITAL_EHR")
         self.assertEqual(ack.get_field("MSH-9"), "ACK")
 
         self.assertEqual(ack.get_field("MSA-1"), "AA")

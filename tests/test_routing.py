@@ -19,13 +19,13 @@ class TestHL7Router(unittest.TestCase):
         self.router = HL7Router(config)
 
     def test_adt_routing_to_cdr(self):
-        raw = "MSH|^~\\&|EPIC_EHR|HOSPITAL_A|RHAPSODY_IE|HOSPITAL_A|20260902093000||ADT^A01|MSG_001|P|2.3\r"
+        raw = "MSH|^~\\&|HOSPITAL_EHR|HOSPITAL_A|RHAPSODY_IE|HOSPITAL_A|20260902093000||ADT^A01|MSG_001|P|2.3\r"
         msg = parse_hl7_message(raw)
         dests = self.router.determine_destinations(msg)
         self.assertEqual(dests, ["CDR_CLINICAL"])
 
     def test_orm_routing_to_lis(self):
-        raw = "MSH|^~\\&|EPIC_CPOE|AMBULATORY|RHAPSODY_IE|HOSPITAL_A|20260902093000||ORM^O01|MSG_002|P|2.3\r"
+        raw = "MSH|^~\\&|HOSPITAL_CPOE|AMBULATORY|RHAPSODY_IE|HOSPITAL_A|20260902093000||ORM^O01|MSG_002|P|2.3\r"
         msg = parse_hl7_message(raw)
         dests = self.router.determine_destinations(msg)
         self.assertEqual(dests, ["LIS_ORDERS"])
@@ -46,7 +46,7 @@ class TestHL7Router(unittest.TestCase):
         self.assertIn("STAT_ALERT_SERVICE", dests)
 
     def test_error_message_routes_to_dlq(self):
-        raw = "MSH|^~\\&|EPIC_EHR|HOSPITAL_A|RHAPSODY_IE|HOSPITAL_A|20260902093000||ADT^A01|MSG_005|P|2.3\r"
+        raw = "MSH|^~\\&|HOSPITAL_EHR|HOSPITAL_A|RHAPSODY_IE|HOSPITAL_A|20260902093000||ADT^A01|MSG_005|P|2.3\r"
         msg = parse_hl7_message(raw)
         dests = self.router.determine_destinations(msg, is_error=True)
         self.assertEqual(dests, ["DLQ"])
