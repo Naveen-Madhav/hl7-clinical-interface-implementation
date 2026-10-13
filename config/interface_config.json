@@ -1,0 +1,129 @@
+{
+  "interface_metadata": {
+    "interface_name": "Clinical HL7 Message Broker",
+    "version": "1.0.0",
+    "environment": "local",
+    "hl7_version_support": ["2.3", "2.3.1", "2.4", "2.5", "2.5.1"]
+  },
+  "network": {
+    "mllp": {
+      "start_block_byte": 11,
+      "end_block_byte": 28,
+      "carriage_return_byte": 13,
+      "character_encoding": "utf-8",
+      "socket_timeout_seconds": 15,
+      "ack_timeout_seconds": 5,
+      "max_message_size_bytes": 1048576
+    },
+    "inbound_listener": {
+      "name": "EHR_Inbound_Communication_Point",
+      "host": "127.0.0.1",
+      "port": 2575,
+      "max_connections": 20,
+      "allowed_senders": ["EPIC_EHR", "EPIC_CPOE", "CERNER_LIS", "TEST_CLIENT"],
+      "require_tls": false
+    },
+    "downstream_destinations": {
+      "LIS_ORDERS": {
+        "name": "Cerner_LIS_Inbound_Orders",
+        "system_code": "CERNER_LIS",
+        "facility_code": "PATHOLOGY",
+        "host": "127.0.0.1",
+        "port": 2576,
+        "connection_type": "MLLP_CLIENT",
+        "reconnect_interval_seconds": 3,
+        "max_retries": 3,
+        "timeout_seconds": 5,
+        "target_message_types": ["ORM^O01"]
+      },
+      "CDR_CLINICAL": {
+        "name": "Clinical_Data_Repository_Inbound",
+        "system_code": "CLINICAL_CDR",
+        "facility_code": "CENTRAL_HOSPITAL",
+        "host": "127.0.0.1",
+        "port": 2577,
+        "connection_type": "MLLP_CLIENT",
+        "reconnect_interval_seconds": 3,
+        "max_retries": 3,
+        "timeout_seconds": 5,
+        "target_message_types": ["ADT^A01", "ADT^A04", "ADT^A08", "ADT^A03", "ORU^R01"]
+      },
+      "STAT_ALERT_SERVICE": {
+        "name": "Critical_Results_Notification_Service",
+        "system_code": "STAT_ALERT",
+        "facility_code": "HOSPITAL_WIDE",
+        "host": "127.0.0.1",
+        "port": 2578,
+        "connection_type": "MLLP_CLIENT",
+        "reconnect_interval_seconds": 2,
+        "max_retries": 5,
+        "timeout_seconds": 3,
+      "target_message_types": ["ORU^R01"]
+      }
+    }
+  },
+  "routing_rules": [
+    {
+      "rule_id": "ROUTE_ADT_TO_CDR",
+      "description": "Route all ADT patient registration, update, and discharge events to the CDR",
+      "match_criteria": {
+        "message_code": "ADT",
+        "trigger_events": ["A01", "A04", "A08", "A03"]
+      },
+      "destinations": ["CDR_CLINICAL"]
+    },
+    {
+      "rule_id": "ROUTE_ORM_LAB_TO_LIS",
+      "description": "Route General and STAT Lab Orders to Laboratory Information System",
+      "match_criteria": {
+        "message_code": "ORM",
+        "trigger_events": ["O01"]
+      },
+      "destinations": ["LIS_ORDERS"]
+    },
+    {
+      "rule_id": "ROUTE_ORU_ROUTINE_TO_CDR",
+      "description": "Route normal/routine lab results to Clinical Data Repository",
+      "match_criteria": {
+        "message_code": "ORU",
+        "trigger_events": ["R01"],
+        "has_abnormal_flags": false
+      },
+      "destinations": ["CDR_CLINICAL"]
+    },
+    {
+      "rule_id": "ROUTE_ORU_CRITICAL_TO_BOTH",
+      "description": "Fork critical/panic abnormal lab results to both CDR and STAT Alert Service",
+      "match_criteria": {
+        "message_code": "ORU",
+        "trigger_events": ["R01"],
+        "has_abnormal_flags": true
+      },
+      "destinations": ["CDR_CLINICAL", "STAT_ALERT_SERVICE"]
+    }
+  ],
+  "deduplication": {
+    "enabled": true,
+    "cache_size": 10000,
+    "ttl_hours": 24,
+    "storage_file": "logs/dedup_cache.json",
+    "action_on_duplicate": "REJECT_WITH_AR"
+  },
+  "exception_management": {
+    "dlq_directory": "dlq",
+    "max_retries": 3,
+    "retry_backoff_seconds": [5, 15, 30],
+    "alert_on_fatal_error": true,
+    "log_level": "DEBUG",
+    "log_directory": "logs"
+  },
+  "validation_profiles": {
+    "strict_mode": true,
+    "require_msh_sending_app": true,
+    "require_msh_receiving_app": true,
+    "require_msh_message_control_id": true,
+    "require_patient_mrn": true,
+    "allowed_sex_codes": ["M", "F", "O", "U", "A", "N"],
+    "date_format_regex": "^(19|20)\\d\\d(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])([0-1][0-9]|2[0-3])?([0-5][0-9])?([0-5][0-9])?$"
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "specification_title": "HL7 v2.3 to v2.5.1 Clinical Interface Field Mapping Matrix",
+  "version": "1.0",
+  "segments": {
+    "MSH": {
+      "description": "Message Header Segment",
+      "fields": {
+        "MSH-1": {"name": "Field Separator", "type": "ST", "default": "|", "required": true},
+        "MSH-2": {"name": "Encoding Characters", "type": "ST", "default": "^~\\&", "required": true},
+        "MSH-3": {"name": "Sending Application", "type": "HD", "required": true, "transform": "UPPERCASE"},
+        "MSH-4": {"name": "Sending Facility", "type": "HD", "required": true, "transform": "UPPERCASE"},
+        "MSH-5": {"name": "Receiving Application", "type": "HD", "required": true, "transform": "UPPERCASE"},
+        "MSH-6": {"name": "Receiving Facility", "type": "HD", "required": true, "transform": "UPPERCASE"},
+        "MSH-7": {"name": "Date/Time of Message", "type": "TS", "required": true, "validation": "HL7_TIMESTAMP"},
+        "MSH-9": {"name": "Message Type", "type": "CM_MSG", "required": true, "components": ["Message Code", "Trigger Event", "Message Structure"]},
+        "MSH-10": {"name": "Message Control ID", "type": "ST", "required": true, "validation": "NON_EMPTY_STRING"},
+        "MSH-11": {"name": "Processing ID", "type": "PT", "default": "P", "required": true, "allowed_values": ["P", "D", "T"]},
+        "MSH-12": {"name": "Version ID", "type": "VID", "required": true, "allowed_values": ["2.3", "2.3.1", "2.4", "2.5", "2.5.1"]}
+      }
+    },
+    "PID": {
+      "description": "Patient Identification Segment",
+      "fields": {
+        "PID-3": {
+          "name": "Patient Identifier List (MRN)",
+          "type": "CX",
+          "required": true,
+          "components": {
+            "PID-3.1": "ID Number",
+            "PID-3.4": "Assigning Authority",
+            "PID-3.5": "Identifier Type Code (MR)"
+          },
+          "rule": "Ensure PID-3.1 is populated and PID-3.5 is normalized to 'MR'"
+        },
+        "PID-5": {
+          "name": "Patient Name",
+          "type": "XPN",
+          "required": true,
+          "components": {
+            "PID-5.1": "Family Name",
+            "PID-5.2": "Given Name",
+            "PID-5.3": "Second Given Name",
+            "PID-5.4": "Suffix",
+            "PID-5.5": "Prefix"
+          },
+          "transform": "TRIM_AND_UPPERCASE"
+        },
+        "PID-7": {"name": "Date/Time of Birth", "type": "TS", "required": true, "validation": "HL7_DATE"},
+        "PID-8": {"name": "Administrative Sex", "type": "IS", "required": true, "code_table": "0001", "allowed_values": ["M", "F", "O", "U", "A", "N"]},
+        "PID-11": {
+          "name": "Patient Address",
+          "type": "XAD",
+          "required": false,
+          "components": {
+            "PID-11.1": "Street Address",
+            "PID-11.3": "City",
+            "PID-11.4": "State or Province",
+            "PID-11.5": "Zip or Postal Code"
+          }
+        },
+        "PID-18": {"name": "Patient Account Number", "type": "CX", "required": false}
+      }
+    },
+    "PV1": {
+      "description": "Patient Visit Segment",
+      "fields": {
+        "PV1-2": {"name": "Patient Class", "type": "IS", "required": true, "code_table": "0004", "allowed_values": ["I", "O", "E", "P", "R", "B"]},
+        "PV1-3": {
+          "name": "Assigned Patient Location",
+          "type": "PL",
+          "required": false,
+          "components": {
+            "PV1-3.1": "Point of Care (Unit)",
+            "PV1-3.2": "Room",
+            "PV1-3.3": "Bed",
+            "PV1-3.4": "Facility"
+          }
+        },
+        "PV1-7": {"name": "Attending Doctor", "type": "XCN", "required": false},
+        "PV1-19": {"name": "Visit Number", "type": "CX", "required": false},
+        "PV1-44": {"name": "Admit Date/Time", "type": "TS", "required": false},
+        "PV1-45": {"name": "Discharge Date/Time", "type": "TS", "required": false}
+      }
+    },
+    "ORC": {
+      "description": "Common Order Segment",
+      "fields": {
+        "ORC-1": {"name": "Order Control", "type": "ID", "required": true, "code_table": "0119", "allowed_values": ["NW", "CA", "DC", "SC", "RE", "OK", "CR", "SN"]},
+        "ORC-2": {"name": "Placer Order Number", "type": "EI", "required": true},
+        "ORC-3": {"name": "Filler Order Number", "type": "EI", "required": false},
+        "ORC-5": {"name": "Order Status", "type": "ID", "required": false, "code_table": "0038", "allowed_values": ["IP", "CM", "DC", "CA", "HD", "A"]},
+        "ORC-9": {"name": "Date/Time of Transaction", "type": "TS", "required": true},
+        "ORC-12": {"name": "Ordering Provider", "type": "XCN", "required": true}
+      }
+    },
+    "OBR": {
+      "description": "Observation Request Segment",
+      "fields": {
+        "OBR-1": {"name": "Set ID - OBR", "type": "SI", "required": true},
+        "OBR-2": {"name": "Placer Order Number", "type": "EI", "required": true},
+        "OBR-3": {"name": "Filler Order Number", "type": "EI", "required": false},
+        "OBR-4": {"name": "Universal Service Identifier", "type": "CE", "required": true, "components": ["Identifier", "Text", "Name of Coding System"]},
+        "OBR-7": {"name": "Observation Date/Time", "type": "TS", "required": true},
+        "OBR-16": {"name": "Ordering Provider", "type": "XCN", "required": true},
+        "OBR-25": {"name": "Result Status", "type": "ID", "required": true, "code_table": "0123", "allowed_values": ["F", "P", "C", "X", "I"]}
+      }
+    },
+    "OBX": {
+      "description": "Observation/Result Segment",
+      "fields": {
+        "OBX-1": {"name": "Set ID - OBX", "type": "SI", "required": true},
+        "OBX-2": {"name": "Value Type", "type": "ID", "required": true, "allowed_values": ["NM", "ST", "TX", "CE", "CWE", "SN"]},
+        "OBX-3": {"name": "Observation Identifier", "type": "CE", "required": true, "components": ["Identifier", "Text", "Coding System"]},
+        "OBX-5": {"name": "Observation Value", "type": "VARIES", "required": true},
+        "OBX-6": {"name": "Units", "type": "CE", "required": false},
+        "OBX-7": {"name": "References Range", "type": "ST", "required": false},
+        "OBX-8": {"name": "Abnormal Flags", "type": "IS", "required": false, "code_table": "0078", "critical_values": ["LL", "HH", "AA", "PANIC", "CRIT"]},
+        "OBX-11": {"name": "Observation Result Status", "type": "ID", "required": true, "code_table": "0085", "allowed_values": ["F", "C", "P", "D", "X"]}
+      }
+    }
+  },
+  "code_translations": {
+    "sex_codes": {
+      "MALE": "M", "FEMALE": "F", "UNKNOWN": "U", "OTHER": "O",
+      "1": "M", "2": "F", "9": "U", "0": "U"
+    },
+    "order_priority": {
+      "STAT": "S", "ROUTINE": "R", "URGENT": "U", "ASAP": "A"
+    },
+    "test_codes_loinc": {
+      "CBC": {"code": "58410-2", "text": "Complete blood count with differential", "coding_system": "LN"},
+      "BMP": {"code": "24323-8", "text": "Basic metabolic panel", "coding_system": "LN"},
+      "GLUCOSE": {"code": "2345-7", "text": "Glucose [Mass/volume] in Serum or Plasma", "coding_system": "LN"},
+      "POTASSIUM": {"code": "2823-3", "text": "Potassium [Moles/volume] in Serum or Plasma", "coding_system": "LN"},
+      "TROPONIN": {"code": "49563-0", "text": "Troponin I.cardiac [Mass/volume] in Serum or Plasma", "coding_system": "LN"}
+    }
+  }
+}
