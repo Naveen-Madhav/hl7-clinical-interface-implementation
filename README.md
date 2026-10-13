@@ -2,6 +2,17 @@
 
 A Python HL7 v2 broker for patient registration, clinical orders, and results, with message validation, workflow mapping, and correlated acknowledgments.
 
+## Sample output
+
+Output excerpt from `python scripts/run_verification.py` using Python 3.11.
+
+```text
+ADT_A01_admit.hl7: accepted (MSG_ADT_001)
+ORM_O01_new_order.hl7: accepted (MSG_ORM_001)
+ORU_R01_routine_result.hl7: accepted (MSG_ORU_001)
+Accepted 8/8 messages
+```
+
 ## Integration problem
 
 Clinical applications need a consistent way to exchange patient events, orders, and results. An interface must recognize the workflow, check required fields, translate known local codes, and distinguish accepted delivery from a rejected or unavailable destination. This project implements those boundaries with local reference endpoints and explicit error responses.
@@ -84,3 +95,5 @@ The duplicate-control-ID sample intentionally reuses the admit sample's control 
 Naveen Madhav | [LinkedIn](https://linkedin.com/in/naveenmadhav)
 
 Licensed under the [MIT License](LICENSE).
+
+**AI assistance:** I defined the project concept, requirements, and validation rule priorities based on my healthcare integration experience. AI coding assistants helped with planning, design exploration, implementation, debugging, testing, and documentation. I take responsibility for reviewing the project, checking its claims, and deciding what to submit.
